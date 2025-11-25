@@ -65,6 +65,16 @@ export default function AIChat() {
       }
     };
 
+    // Listen for custom event to open AI chat from bottom nav
+    const handleOpenAIChat = () => {
+      setIsModalOpen(true);
+      if (chatMessages.length === 0) {
+        initializeChat();
+      }
+    };
+    
+    window.addEventListener('openAIChat', handleOpenAIChat);
+
     const checkAvatarSuggestion = (): boolean => {
       // Don't process if already handled in this component lifecycle
       if (avatarSuggestionProcessedRef.current) {
@@ -153,8 +163,9 @@ export default function AIChat() {
         clearInterval(pollInterval);
       }
       window.removeEventListener('profileCreationReady', handleProfileCreation);
+      window.removeEventListener('openAIChat', handleOpenAIChat);
     };
-  }, []);
+  }, [chatMessages.length]);
 
   // Pre-fill email and name from authenticated user
   useEffect(() => {
@@ -542,7 +553,7 @@ export default function AIChat() {
 
   return (
     <>
-      {/* Floating AI Chat Button */}
+      {/* Floating AI Chat Button - Hidden on mobile since it's in bottom nav */}
       <button
         onClick={() => {
           setIsModalOpen(true);
@@ -550,7 +561,7 @@ export default function AIChat() {
             initializeChat();
           }
         }}
-        className="fixed bottom-8 right-8 z-50 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-gradient-to-br from-primary-purple to-primary-orange shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition-all hover:scale-110 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] max-md:bottom-6 max-md:right-6 max-md:h-16 max-md:w-16"
+        className="fixed bottom-8 right-8 z-50 hidden md:flex h-[72px] w-[72px] items-center justify-center rounded-full bg-gradient-to-br from-primary-purple to-primary-orange shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition-all hover:scale-110 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]"
         aria-label="AI Chat"
       >
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -717,15 +728,15 @@ export default function AIChat() {
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-400">
                           <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M17 8L12 3M12 3L7 8M12 3V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <label className="cursor-pointer rounded-full bg-primary-purple-dark px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-purple-700">
-                          <span>
+                        <label className="relative cursor-pointer rounded-full bg-primary-purple-dark px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-purple-700 active:scale-95">
+                          <span className="pointer-events-none">
                             {chatMessages.some(msg => msg.content.includes('видео-аватар')) ? '📸 Загрузить фото' : '📎 Загрузить файл'}
                           </span>
                           <input
                             type="file"
                             onChange={handleFileUpload}
                             accept={chatMessages.some(msg => msg.content.includes('видео-аватар')) ? 'image/*' : '.pdf,.doc,.docx,.txt'}
-                            className="hidden"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           />
                         </label>
                         <span className="text-xs text-text-light">
