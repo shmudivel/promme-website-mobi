@@ -34,6 +34,7 @@ export default function AIChat() {
   const [showQuickReplies, setShowQuickReplies] = useState(true);
   const [showUploadOptions, setShowUploadOptions] = useState(false);
   const [showAvatarSuggestion, setShowAvatarSuggestion] = useState(false);
+  const [showAuthButtons, setShowAuthButtons] = useState(false);
   const [isCreatingAvatar, setIsCreatingAvatar] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   // Track if we've processed avatar suggestion this session
@@ -188,14 +189,36 @@ export default function AIChat() {
   }, [chatMessages]);
 
   const initializeChat = () => {
+    // Check if user is authenticated
+    const authenticatedUser = localStorage.getItem('prommeAuthUser');
+    
+    if (authenticatedUser) {
+      // Authenticated user - show profile assistance
+      const welcomeMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: 'ai',
+        content: 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль.\n\nХотите, чтобы я помог заполнить ваш профиль автоматически? Вы можете загрузить резюме (PDF, DOCX, TXT) или просто написать о себе, и я заполню форму за вас!',
+        timestamp: new Date()
+      };
+      setChatMessages([welcomeMessage]);
+      setShowQuickReplies(true);
+    } else {
+      // Non-authenticated user - show welcome and prompt to sign in
+      initializeWelcomeChat();
+    }
+  };
+
+  const initializeWelcomeChat = () => {
     const welcomeMessage: ChatMessage = {
       id: Date.now().toString(),
       type: 'ai',
-      content: 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль.\n\nХотите, чтобы я помог заполнить ваш профиль автоматически? Вы можете загрузить резюме (PDF, DOCX, TXT) или просто написать о себе, и я заполню форму за вас!',
+      content: 'Привет! 👋 Я PROMME AI Ассистент.\n\nЧтобы я мог помочь вам найти работу и заполнить профиль, пожалуйста, войдите в систему или зарегистрируйтесь.',
       timestamp: new Date()
     };
     setChatMessages([welcomeMessage]);
-    setShowQuickReplies(true);
+    setShowQuickReplies(false);
+    // We'll use a separate state for auth buttons
+    setShowAuthButtons(true);
   };
 
   const addAIMessage = (content: string, delay: number = 1000) => {
@@ -268,6 +291,24 @@ export default function AIChat() {
     setTimeout(() => {
       sessionStorage.setItem('aiChatShown', 'true');
     }, 2000);
+  };
+
+  const handleLoginClick = () => {
+    addUserMessage('Войти в систему');
+    setShowAuthButtons(false);
+    addAIMessage('Отлично! Перенаправляю вас на страницу входа...', 500);
+    setTimeout(() => {
+      window.location.href = '/auth';
+    }, 1500);
+  };
+
+  const handleSignupClick = () => {
+    addUserMessage('Зарегистрироваться');
+    setShowAuthButtons(false);
+    addAIMessage('Отлично! Перенаправляю вас на страницу регистрации...', 500);
+    setTimeout(() => {
+      window.location.href = '/auth';
+    }, 1500);
   };
 
   const simulateAIProcessing = (inputText: string): Partial<ProfileFormData> => {
@@ -716,6 +757,30 @@ export default function AIChat() {
                         className="flex items-center justify-center gap-2 rounded-full bg-gray-100 px-5 py-2.5 text-sm font-semibold text-text transition-all hover:bg-gray-200"
                       >
                         Может быть позже
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Auth Buttons for Non-Authenticated Users */}
+                  {showAuthButtons && !isTyping && (
+                    <div className="flex flex-col gap-2 px-11">
+                      <button
+                        onClick={handleLoginClick}
+                        className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary-orange-light to-primary-orange px-5 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15M10 17L15 12M15 12L10 7M15 12H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Да, войти
+                      </button>
+                      <button
+                        onClick={handleSignupClick}
+                        className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary-purple-dark to-primary-purple px-5 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-lg"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M20 8V14M23 11H17M12.5 7C12.5 8.933 10.933 10.5 9 10.5C7.067 10.5 5.5 8.933 5.5 7C5.5 5.067 7.067 3.5 9 3.5C10.933 3.5 12.5 5.067 12.5 7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Зарегистрироваться
                       </button>
                     </div>
                   )}

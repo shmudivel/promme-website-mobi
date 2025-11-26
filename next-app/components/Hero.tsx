@@ -1,6 +1,24 @@
 'use client';
 
+import { useEffect } from 'react';
+
 export default function Hero() {
+  // Auto-open AI chat for non-authenticated users after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const authenticatedUser = localStorage.getItem('prommeAuthUser');
+      const welcomeChatShown = sessionStorage.getItem('welcomeChatShown');
+      
+      // Only trigger if user is not authenticated and hasn't seen welcome chat this session
+      if (!authenticatedUser && welcomeChatShown !== 'true') {
+        sessionStorage.setItem('welcomeChatShown', 'true');
+        window.dispatchEvent(new CustomEvent('openAIChat'));
+      }
+    }, 3000); // 3 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section className="relative flex min-h-[600px] items-center justify-center overflow-hidden bg-gradient-to-br from-primary-orange-light via-primary-orange to-primary-pink px-5 pb-[120px] pt-[100px] text-center text-white">
       {/* Decorative background shapes */}
