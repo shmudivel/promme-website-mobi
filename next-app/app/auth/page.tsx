@@ -23,8 +23,13 @@ function AuthPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
+  
+  // Initialize authMode from query param if available
+  const initialMode = searchParams.get('mode');
   const [selectedProfileType, setSelectedProfileType] = useState<ProfileType | null>(null);
-  const [authMode, setAuthMode] = useState<AuthMode>('login');
+  const [authMode, setAuthMode] = useState<AuthMode>(
+    (initialMode === 'login' || initialMode === 'signup') ? initialMode : 'login'
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   // Form states
@@ -499,5 +504,6 @@ export default function AuthPage() {
     </Suspense>
   );
 }
+
 
 

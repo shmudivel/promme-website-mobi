@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase/client';
 
 type MessageType = 'ai' | 'user';
 type ViewMode = 'chat' | 'form';
@@ -309,7 +310,7 @@ export default function AIChat() {
     setShowAuthButtons(false);
     addAIMessage('Отлично! Перенаправляю вас на страницу регистрации...', 500);
     setTimeout(() => {
-      router.push('/auth');
+      router.push('/auth?mode=signup');
     }, 1500);
   };
 
@@ -460,6 +461,15 @@ export default function AIChat() {
         // Create object URL for the image
         const imageUrl = URL.createObjectURL(file);
         
+        // Demo Logic for Video Selection
+        let videoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'; // Default
+        
+        if (file.name.includes('1')) {
+            videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/1js.mp4';
+        } else if (file.name.includes('2')) {
+            videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/2js.mp4';
+        }
+
         addAIMessage('Получил ваше фото! 📸 Начинаю создание видео-аватара...', 500);
         
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -478,19 +488,38 @@ export default function AIChat() {
           
           const avatarData = {
             photoUrl: imageUrl,
-            videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+            videoUrl: videoUrl,
             generatedAt: new Date().toISOString()
           };
           
           localStorage.setItem(avatarKey, JSON.stringify(avatarData));
+
+          // Save to Supabase
+          try {
+              const { error } = await supabase
+                  .from('profiles')
+                  .upsert({ 
+                      email: authUser.email,
+                      avatar_video_url: videoUrl,
+                      updated_at: new Date().toISOString()
+                  }, { onConflict: 'email' });
+
+              if (error) {
+                  console.error('Error saving to Supabase:', error);
+              } else {
+                  console.log('Saved video URL to Supabase:', videoUrl);
+              }
+          } catch (err) {
+              console.error('Supabase connection error:', err);
+          }
         }
         
         addAIMessage('Готово! ✅ Ваш видео-аватар успешно создан! Перенаправляю на страницу профиля...', 7500);
-        
+
         setTimeout(() => {
           setIsCreatingAvatar(false);
           setIsModalOpen(false);
-          router.push('/profile');
+          router.push(`/profile?refresh=${Date.now()}`);
         }, 9000);
       } else {
         // This is a resume file
@@ -501,7 +530,38 @@ export default function AIChat() {
         
         await new Promise(resolve => setTimeout(resolve, 2500));
         
-        const extractedData = simulateAIProcessing(fileText);
+        let extractedData: Partial<ProfileFormData> = {};
+
+        // Demo Logic for Resume parsing
+        if (file.name.includes('1')) {
+             extractedData = {
+                fullName: 'Алексей Викторович Соколов',
+                email: 'a.sokolov.teach@example.com',
+                phone: '+7 (777) 123-45-67',
+                location: 'Алматы, Казахстан',
+                education: 'Магистр технических наук, Информационные системы, КазНУ им. аль-Фараби, 2017\nБакалавр компьютерных наук, Программная инженерия, КазНУ им. аль-Фараби, 2015',
+                experience: 'Старший преподаватель программирования, Образовательная IT-платформа (2020 — н.в.)\nIT-преподаватель, Частная IT-школа (2017 — 2020)',
+                skills: 'Python, JavaScript/TypeScript, SQL, Алгоритмы и структуры данных, Full Stack Development, Педагогические методики',
+                languages: 'Русский (родной), Английский (B2-C1), Казахский (базовый)',
+                about: 'Опытный IT-преподаватель со специализацией в разработке авторских методик обучения программированию. Трансформирую сложные технические концепции в увлекательный образовательный процесс. Миссия — показать студентам, что изучение технологий может быть естественным и вдохновляющим.'
+            };
+        } else if (file.name.includes('2')) {
+             extractedData = {
+                fullName: 'Карпов Дмитрий Владимирович',
+                email: 'd.karpov.driver@mail.kz',
+                phone: '+7 (705) 234-56-78',
+                location: 'Алматы, Казахстан',
+                dateOfBirth: '1984-03-15',
+                education: 'Алматинский колледж транспорта и коммуникаций, Организация перевозок и управление на автомобильном транспорте, 2013',
+                experience: 'Водитель международных рейсов, ТОО "АзияТрансЛогистик" (2021 – 2024)\nВодитель городских маршрутов, АО "АлматыАвтотранс" (2018 – 2021)\nВодитель междугородних перевозок, ИП "Степной Экспресс" (2014 – 2018)',
+                skills: 'Водительские категории B, C, D, E; Тахографы и GPS; ПДД СНГ и Европы; Перевозка опасных грузов (ADR); Таможенное оформление (CMR, TIR)',
+                languages: 'Казахский (родной), Русский (свободно), Английский (базовый)',
+                about: 'Опытный водитель-профессионал с 10-летним стажем безаварийного вождения. Специализируюсь на международных и междугородних перевозках. Ответственный, пунктуальный, без вредных привычек. Готов к длительным командировкам.'
+            };
+        } else {
+            extractedData = simulateAIProcessing(fileText);
+        }
+        
         setProfileFormData(prev => ({ ...prev, ...extractedData }));
         
         addAIMessage('Отлично! ✨ Я извлек информацию из вашего резюме и заполнил профиль. Сейчас покажу форму для проверки и редактирования.', 3500);

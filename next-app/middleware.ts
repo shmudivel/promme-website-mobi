@@ -35,8 +35,9 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabaseClient.auth.getUser();
 
-  // Protected routes - redirect to auth page if user is not authenticated
-  const protectedRoutes = ['/profile', '/messages', '/vacancy/new'];
+  // Protected routes - temporarily disabled for demo with localStorage auth
+  // const protectedRoutes = ['/profile', '/messages', '/vacancy/new'];
+  const protectedRoutes: string[] = [];
   const isProtectedRoute = protectedRoutes.some((route) =>
     request.nextUrl.pathname.startsWith(route)
   );

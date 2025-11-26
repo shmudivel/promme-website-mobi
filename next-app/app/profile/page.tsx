@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AIChat from '@/components/AIChat';
 import { Application } from '@/types';
+import { supabase } from '@/lib/supabase/client';
 
 interface ProfileFormData {
   fullName: string;
@@ -43,7 +44,7 @@ export default function ProfilePage() {
     checkAuthAndLoadProfile();
   }, []);
 
-  const checkAuthAndLoadProfile = () => {
+  const checkAuthAndLoadProfile = async () => {
     try {
       // Check authentication
       const storedAuthUser = localStorage.getItem('prommeAuthUser');
@@ -66,12 +67,49 @@ export default function ProfilePage() {
       }
 
       // Load avatar data
-      const avatarKey = `prommeAvatar_${authUser.email}_${authUser.profileType}`;
-      const storedAvatar = localStorage.getItem(avatarKey);
+      // Priority: 1. Supabase, 2. LocalStorage
+      let loadedAvatarData: AvatarData | null = null;
+
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('avatar_video_url')
+          .eq('email', authUser.email)
+          .single();
+
+        if (data && data.avatar_video_url) {
+          console.log('Loaded avatar from Supabase:', data.avatar_video_url);
+          
+          // Try to get photoUrl from local storage if available, or use a placeholder/empty string
+          let photoUrl = '';
+          const avatarKey = `prommeAvatar_${authUser.email}_${authUser.profileType}`;
+          const storedAvatar = localStorage.getItem(avatarKey);
+          if (storedAvatar) {
+             const localData = JSON.parse(storedAvatar);
+             photoUrl = localData.photoUrl || '';
+          }
+
+          loadedAvatarData = {
+            photoUrl: photoUrl, 
+            videoUrl: data.avatar_video_url,
+            generatedAt: new Date().toISOString()
+          };
+        }
+      } catch (sbError) {
+        console.error('Error fetching from Supabase:', sbError);
+      }
+
+      if (!loadedAvatarData) {
+          const avatarKey = `prommeAvatar_${authUser.email}_${authUser.profileType}`;
+          const storedAvatar = localStorage.getItem(avatarKey);
+          
+          if (storedAvatar) {
+             loadedAvatarData = JSON.parse(storedAvatar);
+          }
+      }
       
-      if (storedAvatar) {
-        const avatar: AvatarData = JSON.parse(storedAvatar);
-        setAvatarData(avatar);
+      if (loadedAvatarData) {
+        setAvatarData(loadedAvatarData);
       } else if (storedProfile) {
         // Profile exists but no avatar - suggest avatar creation
         // Check if already shown this session
@@ -143,7 +181,7 @@ export default function ProfilePage() {
                 ✨ AI
               </span>
             </div>
-            <div className="relative aspect-video overflow-hidden rounded-2xl bg-black">
+            <div className="relative aspect-[9/16] max-w-md mx-auto overflow-hidden rounded-2xl bg-black">
               <video
                 className="h-full w-full object-cover"
                 controls
