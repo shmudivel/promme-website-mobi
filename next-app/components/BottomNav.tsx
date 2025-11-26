@@ -92,7 +92,7 @@ export default function BottomNav() {
       name: 'AI Chat',
       path: '#',
       isAIChat: true,
-      icon: () => (
+      icon: (active: boolean) => (
         <div className="relative flex items-center justify-center w-14 h-14 -mt-6 rounded-full bg-gradient-to-br from-primary-purple via-primary-pink to-primary-orange shadow-lg">
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white">
             <span className="text-xl font-bold bg-gradient-to-br from-primary-purple to-primary-orange bg-clip-text text-transparent">
