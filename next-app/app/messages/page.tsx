@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Conversation, Message } from '@/types';
 import MessagesList from '@/components/MessagesList';
@@ -135,7 +135,7 @@ const generateMockMessages = (conversation: Conversation, userEmail: string): Me
   return messages;
 };
 
-export default function MessagesPage() {
+function MessagesPageContent() {
   const searchParams = useSearchParams();
   const [authenticatedUser, setAuthenticatedUser] = useState<AuthenticatedUser | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -393,6 +393,21 @@ export default function MessagesPage() {
         />
       )}
     </>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen px-4 py-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-orange"></div>
+          <p className="mt-4 text-gray-600">Загрузка сообщений...</p>
+        </div>
+      </div>
+    }>
+      <MessagesPageContent />
+    </Suspense>
   );
 }
 
