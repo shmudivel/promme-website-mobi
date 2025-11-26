@@ -149,3 +149,71 @@ export interface ResumeCardData {
   created_at: string;
 }
 
+// Application Types
+export type ApplicationStatus = 'pending' | 'reviewed' | 'interview' | 'rejected' | 'accepted';
+
+export interface Application {
+  id: string;
+  vacancy_id: string;
+  vacancy_title: string;
+  vacancy_company: string;
+  applicant_id: string;
+  applicant_name: string;
+  applicant_email: string;
+  applicant_photo?: string;
+  applicant_position: string;
+  applicant_location?: string;
+  resume: {
+    summary: string;
+    experience_years?: number;
+    skills?: string[];
+    education?: string;
+    salary_expectation?: string;
+  };
+  status: ApplicationStatus;
+  applied_at: string;
+  updated_at: string;
+}
+
+export interface UserApplication {
+  id: string;
+  vacancy_id: string;
+  vacancy_title: string;
+  company: string;
+  location: string;
+  status: ApplicationStatus;
+  applied_at: string;
+}
+
+// Messaging Types
+export interface MessageParticipant {
+  id: string;
+  name: string;
+  avatar?: string;
+  role?: string;
+  company?: string;
+}
+
+export interface Message {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  timestamp: string;
+  isRead: boolean;
+}
+
+export interface Conversation {
+  id: string;
+  participants: MessageParticipant[];
+  lastMessage?: {
+    content: string;
+    timestamp: string;
+    senderId: string;
+  };
+  unreadCount: number;
+  updatedAt: string;
+  vacancyId?: string;
+  vacancyTitle?: string;
+}
+
