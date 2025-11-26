@@ -67,3 +67,85 @@ export interface IndustrialPark {
   updated_at: string;
 }
 
+// Social Feed Types
+export interface FeedPost {
+  id: string;
+  type: 'post' | 'event' | 'vacancy' | 'news';
+  author: {
+    id: string;
+    name: string;
+    avatar?: string;
+    role?: string;
+    company?: string;
+  };
+  content: string;
+  images?: string[];
+  video?: string;
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  is_liked?: boolean;
+  created_at: string;
+  event?: {
+    title: string;
+    date: string;
+    location: string;
+    attendees_count: number;
+  };
+  vacancy?: {
+    id: string;
+    title: string;
+    company: string;
+    location: string;
+    salary?: string;
+  };
+}
+
+export interface Comment {
+  id: string;
+  author: {
+    name: string;
+    avatar?: string;
+    role?: string;
+  };
+  content: string;
+  created_at: string;
+  likes_count: number;
+  is_liked?: boolean;
+}
+
+export interface CompanyCardData {
+  id: string;
+  name: string;
+  logo?: string;
+  description: string;
+  industry?: string;
+  location?: string;
+  employees_count?: number;
+  vacancies_count?: number;
+  likes_count: number;
+  comments_count: number;
+  is_liked?: boolean;
+  created_at: string;
+}
+
+export interface ResumeCardData {
+  id: string;
+  user: {
+    name: string;
+    photo?: string;
+    position: string;
+    location?: string;
+  };
+  summary: string;
+  experience_years?: number;
+  skills?: string[];
+  education?: string;
+  employment_type?: string;
+  salary_expectation?: string;
+  likes_count: number;
+  comments_count: number;
+  is_liked?: boolean;
+  created_at: string;
+}
+
