@@ -48,7 +48,8 @@ export default function ProfilePage() {
       // Check authentication
       const storedAuthUser = localStorage.getItem('prommeAuthUser');
       if (!storedAuthUser) {
-        router.push('/auth');
+        router.push('/auth?redirectTo=%2Fprofile');
+        // Keep loading state true during redirect
         return;
       }
 
@@ -91,9 +92,11 @@ export default function ProfilePage() {
           window.dispatchEvent(new Event('profileCreationReady'));
         }
       }
+      
+      // Only set loading to false after successfully loading data
+      setIsLoading(false);
     } catch (error) {
       console.error('Error loading profile:', error);
-    } finally {
       setIsLoading(false);
     }
   };
