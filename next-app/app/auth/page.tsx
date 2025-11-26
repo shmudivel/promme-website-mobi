@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, FormEvent, ReactElement } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, FormEvent, ReactElement, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type ProfileType = 'company' | 'job-seeker' | 'facilitator';
 type AuthMode = 'login' | 'signup';
@@ -19,8 +19,10 @@ interface ProfileOptionData {
   icon: ReactElement;
 }
 
-export default function AuthPage() {
+function AuthPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') || '/';
   const [selectedProfileType, setSelectedProfileType] = useState<ProfileType | null>(null);
   const [authMode, setAuthMode] = useState<AuthMode>('login');
   const [isLoading, setIsLoading] = useState(false);
@@ -143,7 +145,7 @@ export default function AuthPage() {
 
       console.log('Login successful:', authenticatedUserData);
       alert(`Добро пожаловать, ${existingUser.name}!`);
-      router.push('/');
+      router.push(redirectTo);
     } catch (error) {
       console.error('Login error:', error);
       alert('Произошла ошибка при входе');
@@ -232,7 +234,7 @@ export default function AuthPage() {
 
       console.log('Registration successful:', authenticatedUserData);
       alert(`Регистрация успешна! Добро пожаловать, ${userName}!`);
-      router.push('/');
+      router.push(redirectTo);
     } catch (error) {
       console.error('Signup error:', error);
       alert('Произошла ошибка при регистрации');
@@ -483,5 +485,19 @@ export default function AuthPage() {
   );
 }
 
+export default function AuthPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-[#FF8C42] via-[#FF6B35] to-[#E94397] flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+          <p className="mt-4 text-white font-semibold">Загрузка...</p>
+        </div>
+      </div>
+    }>
+      <AuthPageContent />
+    </Suspense>
+  );
+}
 
 
