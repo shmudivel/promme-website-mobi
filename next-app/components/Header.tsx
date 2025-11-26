@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 interface AuthenticatedUser {
@@ -13,6 +14,7 @@ interface AuthenticatedUser {
 }
 
 export default function Header() {
+  const router = useRouter();
   const [authenticatedUser, setAuthenticatedUser] = useState<AuthenticatedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -56,7 +58,7 @@ export default function Header() {
     sessionStorage.removeItem('aiChatShown');
     sessionStorage.removeItem('freshLogin');
     setAuthenticatedUser(null);
-    window.location.href = '/';
+    router.push('/');
   }
 
   return (

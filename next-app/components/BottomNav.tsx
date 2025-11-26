@@ -2,7 +2,7 @@
 
 import { useState, useEffect, ReactElement } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface AuthenticatedUser {
   name: string;
@@ -22,6 +22,7 @@ interface NavItem {
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const [authenticatedUser, setAuthenticatedUser] = useState<AuthenticatedUser | null>(null);
 
   useEffect(() => {
@@ -159,7 +160,7 @@ export default function BottomNav() {
     sessionStorage.removeItem('aiChatShown');
     sessionStorage.removeItem('freshLogin');
     setAuthenticatedUser(null);
-    window.location.href = '/';
+    router.push('/');
   };
 
   return (

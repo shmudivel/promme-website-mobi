@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Vacancy, Application } from '@/types';
 
 interface ApplicationModalProps {
@@ -10,6 +11,7 @@ interface ApplicationModalProps {
 }
 
 export default function ApplicationModal({ vacancy, onClose, onSubmit }: ApplicationModalProps) {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -95,7 +97,7 @@ export default function ApplicationModal({ vacancy, onClose, onSubmit }: Applica
         onSubmit();
         // Redirect to messages page with new conversation
         const conversationId = `conv_${vacancy.company}_${Date.now()}`;
-        window.location.href = `/messages?conversation=${conversationId}`;
+        router.push(`/messages?conversation=${conversationId}`);
       }, 2000);
     }, 1500);
   };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 type MessageType = 'ai' | 'user';
 type ViewMode = 'chat' | 'form';
@@ -26,6 +27,7 @@ interface ProfileFormData {
 }
 
 export default function AIChat() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('chat');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -298,7 +300,7 @@ export default function AIChat() {
     setShowAuthButtons(false);
     addAIMessage('Отлично! Перенаправляю вас на страницу входа...', 500);
     setTimeout(() => {
-      window.location.href = '/auth';
+      router.push('/auth');
     }, 1500);
   };
 
@@ -307,7 +309,7 @@ export default function AIChat() {
     setShowAuthButtons(false);
     addAIMessage('Отлично! Перенаправляю вас на страницу регистрации...', 500);
     setTimeout(() => {
-      window.location.href = '/auth';
+      router.push('/auth');
     }, 1500);
   };
 
@@ -488,7 +490,7 @@ export default function AIChat() {
         setTimeout(() => {
           setIsCreatingAvatar(false);
           setIsModalOpen(false);
-          window.location.href = '/profile';
+          router.push('/profile');
         }, 9000);
       } else {
         // This is a resume file
@@ -584,7 +586,7 @@ export default function AIChat() {
       
       // Redirect after a short delay
       setTimeout(() => {
-        window.location.href = '/profile';
+        router.push('/profile');
       }, 300);
     } catch (error) {
       console.error('Error saving profile:', error);
