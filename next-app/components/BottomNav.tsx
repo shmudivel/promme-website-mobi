@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactElement } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -17,7 +17,7 @@ interface NavItem {
   name: string;
   path: string;
   isAIChat?: boolean;
-  icon: (active: boolean) => JSX.Element;
+  icon: (active: boolean) => ReactElement;
 }
 
 export default function BottomNav() {
