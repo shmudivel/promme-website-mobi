@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, ReactElement } from 'react';
 import { useRouter } from 'next/navigation';
 
 type ProfileType = 'company' | 'job-seeker' | 'facilitator';
@@ -16,7 +16,7 @@ interface ProfileOptionData {
   type: ProfileType;
   title: string;
   description: string;
-  icon: JSX.Element;
+  icon: ReactElement;
 }
 
 export default function AuthPage() {
