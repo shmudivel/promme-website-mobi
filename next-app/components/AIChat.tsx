@@ -25,6 +25,11 @@ interface ProfileFormData {
   skills: string;
   languages: string;
   about: string;
+  // Company-specific fields
+  industry?: string;
+  foundedYear?: string;
+  employeeCount?: string;
+  projectsCount?: string;
 }
 
 export default function AIChat() {
@@ -42,6 +47,7 @@ export default function AIChat() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   // Track if we've processed avatar suggestion this session
   const avatarSuggestionProcessedRef = useRef(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState<any>(null);
   const [profileFormData, setProfileFormData] = useState<ProfileFormData>({
     fullName: '',
     email: '',
@@ -177,6 +183,7 @@ export default function AIChat() {
       const storedAuthUser = localStorage.getItem('prommeAuthUser');
       if (storedAuthUser) {
         const authUser = JSON.parse(storedAuthUser);
+        setAuthenticatedUser(authUser);
         setProfileFormData(prev => ({
           ...prev,
           fullName: authUser.name || '',
@@ -196,11 +203,16 @@ export default function AIChat() {
     const authenticatedUser = localStorage.getItem('prommeAuthUser');
     
     if (authenticatedUser) {
+      const user = JSON.parse(authenticatedUser);
+      const isCompany = user.profileType === 'company';
+      
       // Authenticated user - show profile assistance
       const welcomeMessage: ChatMessage = {
         id: Date.now().toString(),
         type: 'ai',
-        content: 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль.\n\nХотите, чтобы я помог заполнить ваш профиль автоматически? Вы можете загрузить резюме (PDF, DOCX, TXT) или просто написать о себе, и я заполню форму за вас!',
+        content: isCompany 
+          ? 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль компании.\n\nХотите, чтобы я помог заполнить профиль автоматически? Вы можете загрузить описание компании, презентацию или просто написать о ней, и я заполню форму за вас!'
+          : 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль.\n\nХотите, чтобы я помог заполнить ваш профиль автоматически? Вы можете загрузить резюме (PDF, DOCX, TXT) или просто написать о себе, и я заполню форму за вас!',
         timestamp: new Date()
       };
       setChatMessages([welcomeMessage]);
@@ -279,9 +291,16 @@ export default function AIChat() {
   };
 
   const handleYesClick = () => {
+    const isCompany = authenticatedUser?.profileType === 'company';
+    
     addUserMessage('Да, помогите заполнить профиль!');
     setShowQuickReplies(false);
-    addAIMessage('Отлично! 🎉 Вы можете загрузить ваше резюме или просто написать о себе в чат. Я извлеку всю необходимую информацию и заполню профиль автоматически.', 1000);
+    
+    const responseMessage = isCompany
+      ? 'Отлично! 🎉 Вы можете загрузить информацию о компании или просто написать о ней в чат. Я извлеку всю необходимую информацию и заполню профиль автоматически.'
+      : 'Отлично! 🎉 Вы можете загрузить ваше резюме или просто написать о себе в чат. Я извлеку всю необходимую информацию и заполню профиль автоматически.';
+      
+    addAIMessage(responseMessage, 1000);
     setTimeout(() => {
       setShowUploadOptions(true);
     }, 1500);
@@ -452,7 +471,11 @@ export default function AIChat() {
     try {
       // Check if this is an image file for avatar creation
       const isImageFile = file.type.startsWith('image/');
-      
+
+      // Get user profile type for demo detection (shared by both avatar and text file blocks)
+      const storedAuthUser = localStorage.getItem('prommeAuthUser');
+      const userProfileType = storedAuthUser ? JSON.parse(storedAuthUser).profileType : null;
+
       if (isImageFile && chatMessages.some(msg => msg.content.includes('видео-аватар'))) {
         // This is an avatar photo upload
         console.log('Avatar photo uploaded:', file.name);
@@ -460,14 +483,24 @@ export default function AIChat() {
         
         // Create object URL for the image
         const imageUrl = URL.createObjectURL(file);
-        
+
         // Demo Logic for Video Selection
         let videoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'; // Default
-        
-        if (file.name.includes('1')) {
+
+        if (userProfileType === 'company') {
+          // Company demo videos
+          if (file.name.includes('5')) {
+            videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/5_company.mp4';
+          } else if (file.name.includes('6')) {
+            videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/6_company.mp4';
+          }
+        } else {
+          // Job seeker demo videos
+          if (file.name.includes('1')) {
             videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/1js.mp4';
-        } else if (file.name.includes('2')) {
+          } else if (file.name.includes('2')) {
             videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/2js.mp4';
+          }
         }
 
         addAIMessage('Получил ваше фото! 📸 Начинаю создание видео-аватара...', 500);
@@ -479,9 +512,8 @@ export default function AIChat() {
         addAIMessage('Генерирую видео с помощью AI... 🎬', 4500);
         
         await new Promise(resolve => setTimeout(resolve, 3000));
-        
-        // Save avatar data
-        const storedAuthUser = localStorage.getItem('prommeAuthUser');
+
+        // Save avatar data (reusing storedAuthUser from line 470)
         if (storedAuthUser) {
           const authUser = JSON.parse(storedAuthUser);
           const avatarKey = `prommeAvatar_${authUser.email}_${authUser.profileType}`;
@@ -532,6 +564,20 @@ export default function AIChat() {
         
         let extractedData: Partial<ProfileFormData> = {};
 
+        // Edge case: Warn if company uploads job seeker file
+        if ((file.name.includes('1') || file.name.includes('2')) && userProfileType === 'company') {
+          addAIMessage('⚠️ Этот файл предназначен для профиля соискателя. Для компаний используйте файлы 5_company.txt или 6_company.txt', 2000);
+          setIsTyping(false);
+          return;
+        }
+
+        // Edge case: Warn if job seeker uploads company file
+        if ((file.name.includes('5') || file.name.includes('6')) && userProfileType !== 'company') {
+          addAIMessage('⚠️ Этот файл предназначен для профиля компании. Для соискателей используйте файлы 1.txt или 2.txt', 2000);
+          setIsTyping(false);
+          return;
+        }
+
         // Demo Logic for Resume parsing
         if (file.name.includes('1')) {
              extractedData = {
@@ -557,6 +603,36 @@ export default function AIChat() {
                 skills: 'Водительские категории B, C, D, E; Тахографы и GPS; ПДД СНГ и Европы; Перевозка опасных грузов (ADR); Таможенное оформление (CMR, TIR)',
                 languages: 'Казахский (родной), Русский (свободно), Английский (базовый)',
                 about: 'Опытный водитель-профессионал с 10-летним стажем безаварийного вождения. Специализируюсь на международных и междугородних перевозках. Ответственный, пунктуальный, без вредных привычек. Готов к длительным командировкам.'
+            };
+        } else if (file.name.includes('5') && userProfileType === 'company') {
+            // Company 5: ГеоСтройПроект
+            extractedData = {
+                fullName: 'ООО "ГеоСтройПроект"',
+                email: 'info@geostroy.kz',
+                phone: '+7 (727) 350-12-45',
+                location: 'Алматы, Казахстан',
+                industry: 'Геологоразведка и инженерные изыскания',
+                foundedYear: '2004',
+                employeeCount: '120+',
+                projectsCount: '4500+',
+                skills: 'Геологоразведочные работы, Бурение скважин, Инженерно-геологические изыскания, Лабораторные исследования, Геофизические методы, Экологический мониторинг',
+                experience: '20 лет успешной работы на рынке геологоразведки',
+                about: 'Ведущая компания в области геологоразведки и инженерных изысканий. За 20 лет работы реализовано более 4500 проектов по всему Казахстану. Обладаем современной технической базой, собственной аккредитованной лабораторией и командой из 120+ высококвалифицированных специалистов. Выполняем полный комплекс работ: от предварительных исследований до комплексных геологических изысканий для крупных инфраструктурных объектов.'
+            };
+        } else if (file.name.includes('6') && userProfileType === 'company') {
+            // Company 6: ТеплоИзолПром
+            extractedData = {
+                fullName: 'ООО "ТеплоИзолПром"',
+                email: 'sales@teploizol.kz',
+                phone: '+7 (727) 245-67-89',
+                location: 'Алматы, Казахстан',
+                industry: 'Производство и монтаж теплоизоляции',
+                foundedYear: '2009',
+                employeeCount: '85',
+                projectsCount: '2000+',
+                skills: 'Промышленная изоляция трубопроводов, Энергосберегающие решения, Системы утепления фасадов, Огнезащита конструкций, Холодильная изоляция, Акустическая изоляция',
+                experience: '15 лет опыта в производстве и монтаже теплоизоляции',
+                about: 'Производственная компания, специализирующаяся на комплексных решениях в области теплоизоляции. Собственное производство современных теплоизоляционных материалов. За 15 лет работы выполнено более 2000 объектов, смонтировано 350+ км промышленной изоляции. Работаем с ведущими предприятиями нефтегазовой, химической и энергетической отраслей. Предоставляем полный цикл услуг: от разработки технических решений до монтажа и гарантийного обслуживания.'
             };
         } else {
             extractedData = simulateAIProcessing(fileText);
@@ -934,13 +1010,15 @@ export default function AIChat() {
                   {/* Profile Form Fields */}
                   <div className="space-y-4">
                     <div>
-                      <label className="mb-1 block text-sm font-semibold text-text">Полное имя *</label>
+                      <label className="mb-1 block text-sm font-semibold text-text">
+                        {authenticatedUser?.profileType === 'company' ? 'Название компании *' : 'Полное имя *'}
+                      </label>
                       <input
                         type="text"
                         value={profileFormData.fullName}
                         onChange={(e) => handleFormChange('fullName', e.target.value)}
                         className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
-                        placeholder="Иван Иванов"
+                        placeholder={authenticatedUser?.profileType === 'company' ? 'ООО "Название"' : 'Иван Иванов'}
                       />
                     </div>
 
@@ -999,24 +1077,28 @@ export default function AIChat() {
                     </div>
 
                     <div>
-                      <label className="mb-1 block text-sm font-semibold text-text">Опыт работы</label>
+                      <label className="mb-1 block text-sm font-semibold text-text">
+                        {authenticatedUser?.profileType === 'company' ? 'Опыт компании' : 'Опыт работы'}
+                      </label>
                       <textarea
                         value={profileFormData.experience}
                         onChange={(e) => handleFormChange('experience', e.target.value)}
                         rows={3}
                         className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
-                        placeholder="Senior Developer в компании X, 5 лет опыта..."
+                        placeholder={authenticatedUser?.profileType === 'company' ? '10 лет на рынке...' : 'Senior Developer в компании X, 5 лет опыта...'}
                       />
                     </div>
 
                     <div>
-                      <label className="mb-1 block text-sm font-semibold text-text">Навыки</label>
+                      <label className="mb-1 block text-sm font-semibold text-text">
+                        {authenticatedUser?.profileType === 'company' ? 'Услуги и специализация' : 'Навыки'}
+                      </label>
                       <textarea
                         value={profileFormData.skills}
                         onChange={(e) => handleFormChange('skills', e.target.value)}
                         rows={2}
                         className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
-                        placeholder="JavaScript, React, Node.js, Python"
+                        placeholder={authenticatedUser?.profileType === 'company' ? 'Производство, Монтаж, Консалтинг' : 'JavaScript, React, Node.js, Python'}
                       />
                     </div>
 
@@ -1041,6 +1123,57 @@ export default function AIChat() {
                         placeholder="Расскажите о себе..."
                       />
                     </div>
+
+                    {/* Company-Specific Fields */}
+                    {authenticatedUser?.profileType === 'company' && (
+                      <>
+                        <div>
+                          <label className="mb-1 block text-sm font-semibold text-text">Отрасль</label>
+                          <input
+                            type="text"
+                            value={profileFormData.industry || ''}
+                            onChange={(e) => handleFormChange('industry', e.target.value)}
+                            className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
+                            placeholder="Например: Геологоразведка и инженерные изыскания"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <label className="mb-1 block text-sm font-semibold text-text">Год основания</label>
+                            <input
+                              type="text"
+                              value={profileFormData.foundedYear || ''}
+                              onChange={(e) => handleFormChange('foundedYear', e.target.value)}
+                              className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
+                              placeholder="2004"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="mb-1 block text-sm font-semibold text-text">Количество сотрудников</label>
+                            <input
+                              type="text"
+                              value={profileFormData.employeeCount || ''}
+                              onChange={(e) => handleFormChange('employeeCount', e.target.value)}
+                              className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
+                              placeholder="50+"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="mb-1 block text-sm font-semibold text-text">Реализовано проектов</label>
+                            <input
+                              type="text"
+                              value={profileFormData.projectsCount || ''}
+                              onChange={(e) => handleFormChange('projectsCount', e.target.value)}
+                              className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
+                              placeholder="1000+"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

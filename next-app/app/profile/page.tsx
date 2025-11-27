@@ -18,6 +18,11 @@ interface ProfileFormData {
   skills: string;
   languages: string;
   about: string;
+  // Company-specific fields
+  industry?: string;
+  foundedYear?: string;
+  employeeCount?: string;
+  projectsCount?: string;
 }
 
 interface AuthenticatedUser {
@@ -233,7 +238,7 @@ export default function ProfilePage() {
                 <span className="hidden sm:inline">Создать пост</span>
                 <span className="sm:hidden">Пост</span>
               </button>
-              {!avatarData && authenticatedUser?.profileType === 'job-seeker' && (
+              {!avatarData && (authenticatedUser?.profileType === 'job-seeker' || authenticatedUser?.profileType === 'company') && (
                 <button
                   onClick={handleCreateAvatar}
                   className="flex items-center gap-1.5 sm:gap-2 rounded-full bg-gradient-to-r from-primary-pink to-primary-purple px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-semibold text-white transition-all hover:shadow-lg"
@@ -242,8 +247,12 @@ export default function ProfilePage() {
                     <path d="M23 7L16 12L23 17V7Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     <rect x="1" y="5" width="15" height="14" rx="2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  <span className="hidden sm:inline">Создать видео-аватар</span>
-                  <span className="sm:hidden">Аватар</span>
+                  <span className="hidden sm:inline">
+                    {authenticatedUser?.profileType === 'company' ? 'Создать видео-презентацию' : 'Создать видео-аватар'}
+                  </span>
+                  <span className="sm:hidden">
+                    {authenticatedUser?.profileType === 'company' ? 'Презентация' : 'Аватар'}
+                  </span>
                 </button>
               )}
               <button
@@ -576,6 +585,56 @@ function CompanyProfile({ profileData, authenticatedUser }: { profileData: Profi
             О компании
           </h2>
           <p className="text-text leading-relaxed">{profileData.about}</p>
+        </div>
+      )}
+
+      {/* Industry */}
+      {profileData.industry && (
+        <div className="rounded-3xl bg-white p-8 shadow-2xl">
+          <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-text">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-purple">
+              <path d="M3 21H21M5 21V7L13 3V21M19 21V11L13 7M9 9H10M9 13H10M9 17H10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Отрасль
+          </h2>
+          <p className="text-lg text-text">{profileData.industry}</p>
+        </div>
+      )}
+
+      {/* Company Stats */}
+      {(profileData.foundedYear || profileData.employeeCount || profileData.projectsCount) && (
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Founded Year Card */}
+          {profileData.foundedYear && (
+            <div className="rounded-3xl bg-white p-8 shadow-2xl text-center">
+              <div className="mb-2 text-4xl">📅</div>
+              <p className="text-sm font-semibold text-text-light mb-2">Год основания</p>
+              <p className="text-3xl font-bold text-primary-purple">{profileData.foundedYear}</p>
+              <p className="text-sm text-text-light mt-1">
+                {new Date().getFullYear() - parseInt(profileData.foundedYear)} лет на рынке
+              </p>
+            </div>
+          )}
+
+          {/* Employee Count Card */}
+          {profileData.employeeCount && (
+            <div className="rounded-3xl bg-white p-8 shadow-2xl text-center">
+              <div className="mb-2 text-4xl">👥</div>
+              <p className="text-sm font-semibold text-text-light mb-2">Сотрудников</p>
+              <p className="text-3xl font-bold text-primary-orange">{profileData.employeeCount}</p>
+              <p className="text-sm text-text-light mt-1">специалистов</p>
+            </div>
+          )}
+
+          {/* Projects Count Card */}
+          {profileData.projectsCount && (
+            <div className="rounded-3xl bg-white p-8 shadow-2xl text-center">
+              <div className="mb-2 text-4xl">🎯</div>
+              <p className="text-sm font-semibold text-text-light mb-2">Реализовано проектов</p>
+              <p className="text-3xl font-bold text-primary-pink">{profileData.projectsCount}</p>
+              <p className="text-sm text-text-light mt-1">успешно завершено</p>
+            </div>
+          )}
         </div>
       )}
 

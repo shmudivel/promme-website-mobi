@@ -382,14 +382,22 @@ function AuthPageContent() {
               {authMode === 'signup' && (
                 <form onSubmit={handleSignup} className="animate-[fadeIn_0.4s_ease-in]">
                   <div className="mb-6">
-                    <label htmlFor="signupName" className="block text-sm font-semibold text-[#34374a] mb-2">Полное имя</label>
+                    <label htmlFor="signupName" className="block text-sm font-semibold text-[#34374a] mb-2">
+                      {selectedProfileType === 'company' ? 'Название компании' : 
+                       selectedProfileType === 'facilitator' ? 'Название учреждения' : 
+                       'Полное имя'}
+                    </label>
                     <input
                       type="text"
                       id="signupName"
                       value={signupName}
                       onChange={(e) => setSignupName(e.target.value)}
                       className="w-full py-4 px-5 border-2 border-[#E5E5E5] rounded-xl text-base text-[#34374a] transition-all duration-300 bg-[#FAFAFA] font-[Verdana,Arial,sans-serif] focus:outline-none focus:border-[#FF6B35] focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)] placeholder:text-[#A0A0A0]"
-                      placeholder="Иван Иванов"
+                      placeholder={
+                        selectedProfileType === 'company' ? 'ООО "Название"' :
+                        selectedProfileType === 'facilitator' ? 'Университет...' :
+                        'Иван Иванов'
+                      }
                       required
                     />
                   </div>
