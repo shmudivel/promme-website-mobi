@@ -23,6 +23,10 @@ interface ProfileFormData {
   foundedYear?: string;
   employeeCount?: string;
   projectsCount?: string;
+  // Facilitator-specific fields
+  studentCount?: string;
+  coursesCount?: string;
+  campusCount?: string;
 }
 
 interface AuthenticatedUser {
@@ -911,6 +915,43 @@ function FacilitatorProfile({ profileData, authenticatedUser }: { profileData: P
             Об учреждении
           </h2>
           <p className="text-text leading-relaxed">{profileData.about}</p>
+        </div>
+      )}
+
+      {/* Facilitator Stats */}
+      {(profileData.foundedYear || profileData.studentCount || profileData.coursesCount) && (
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Founded Year Card */}
+          {profileData.foundedYear && (
+            <div className="rounded-3xl bg-white p-8 shadow-2xl text-center">
+              <div className="mb-2 text-4xl">📅</div>
+              <p className="text-sm font-semibold text-text-light mb-2">Год основания</p>
+              <p className="text-3xl font-bold text-primary-purple">{profileData.foundedYear}</p>
+              <p className="text-sm text-text-light mt-1">
+                {new Date().getFullYear() - parseInt(profileData.foundedYear)} лет опыта
+              </p>
+            </div>
+          )}
+
+          {/* Student Count Card */}
+          {profileData.studentCount && (
+            <div className="rounded-3xl bg-white p-8 shadow-2xl text-center">
+              <div className="mb-2 text-4xl">🎓</div>
+              <p className="text-sm font-semibold text-text-light mb-2">Студентов</p>
+              <p className="text-3xl font-bold text-primary-orange">{profileData.studentCount}</p>
+              <p className="text-sm text-text-light mt-1">обучается сейчас</p>
+            </div>
+          )}
+
+          {/* Courses Count Card */}
+          {profileData.coursesCount && (
+            <div className="rounded-3xl bg-white p-8 shadow-2xl text-center">
+              <div className="mb-2 text-4xl">📚</div>
+              <p className="text-sm font-semibold text-text-light mb-2">Программ</p>
+              <p className="text-3xl font-bold text-primary-gold">{profileData.coursesCount}</p>
+              <p className="text-sm text-text-light mt-1">направлений подготовки</p>
+            </div>
+          )}
         </div>
       )}
 

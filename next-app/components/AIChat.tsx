@@ -30,6 +30,10 @@ interface ProfileFormData {
   foundedYear?: string;
   employeeCount?: string;
   projectsCount?: string;
+  // Facilitator-specific fields
+  studentCount?: string;
+  coursesCount?: string;
+  campusCount?: string;
 }
 
 export default function AIChat() {
@@ -205,14 +209,21 @@ export default function AIChat() {
     if (authenticatedUser) {
       const user = JSON.parse(authenticatedUser);
       const isCompany = user.profileType === 'company';
+      const isFacilitator = user.profileType === 'facilitator';
+      
+      let welcomeContent = 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль.\n\nХотите, чтобы я помог заполнить ваш профиль автоматически? Вы можете загрузить резюме (PDF, DOCX, TXT) или просто написать о себе, и я заполню форму за вас!';
+
+      if (isCompany) {
+        welcomeContent = 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль компании.\n\nХотите, чтобы я помог заполнить профиль автоматически? Вы можете загрузить описание компании, презентацию или просто написать о ней, и я заполню форму за вас!';
+      } else if (isFacilitator) {
+        welcomeContent = 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль учебного заведения.\n\nХотите, чтобы я помог заполнить профиль автоматически? Вы можете загрузить описание учреждения, список программ или просто написать о нем, и я заполню форму за вас!';
+      }
       
       // Authenticated user - show profile assistance
       const welcomeMessage: ChatMessage = {
         id: Date.now().toString(),
         type: 'ai',
-        content: isCompany 
-          ? 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль компании.\n\nХотите, чтобы я помог заполнить профиль автоматически? Вы можете загрузить описание компании, презентацию или просто написать о ней, и я заполню форму за вас!'
-          : 'Привет! 👋 Я PROMME AI Ассистент. Я помогу вам заполнить профиль.\n\nХотите, чтобы я помог заполнить ваш профиль автоматически? Вы можете загрузить резюме (PDF, DOCX, TXT) или просто написать о себе, и я заполню форму за вас!',
+        content: welcomeContent,
         timestamp: new Date()
       };
       setChatMessages([welcomeMessage]);
@@ -292,13 +303,18 @@ export default function AIChat() {
 
   const handleYesClick = () => {
     const isCompany = authenticatedUser?.profileType === 'company';
+    const isFacilitator = authenticatedUser?.profileType === 'facilitator';
     
     addUserMessage('Да, помогите заполнить профиль!');
     setShowQuickReplies(false);
     
-    const responseMessage = isCompany
-      ? 'Отлично! 🎉 Вы можете загрузить информацию о компании или просто написать о ней в чат. Я извлеку всю необходимую информацию и заполню профиль автоматически.'
-      : 'Отлично! 🎉 Вы можете загрузить ваше резюме или просто написать о себе в чат. Я извлеку всю необходимую информацию и заполню профиль автоматически.';
+    let responseMessage = 'Отлично! 🎉 Вы можете загрузить ваше резюме или просто написать о себе в чат. Я извлеку всю необходимую информацию и заполню профиль автоматически.';
+
+    if (isCompany) {
+      responseMessage = 'Отлично! 🎉 Вы можете загрузить информацию о компании или просто написать о ней в чат. Я извлеку всю необходимую информацию и заполню профиль автоматически.';
+    } else if (isFacilitator) {
+      responseMessage = 'Отлично! 🎉 Вы можете загрузить информацию об учебном заведении или просто написать о нем в чат. Я извлеку всю необходимую информацию и заполню профиль автоматически.';
+    }
       
     addAIMessage(responseMessage, 1000);
     setTimeout(() => {
@@ -494,6 +510,13 @@ export default function AIChat() {
           } else if (file.name.includes('6')) {
             videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/6_company.mp4';
           }
+        } else if (userProfileType === 'facilitator') {
+          // Facilitator demo videos
+          if (file.name.includes('3')) {
+            videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/3_study_facility.mp4';
+          } else if (file.name.includes('4')) {
+            videoUrl = 'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/4_study_facility.mp4';
+          }
         } else {
           // Job seeker demo videos
           if (file.name.includes('1')) {
@@ -572,10 +595,17 @@ export default function AIChat() {
         }
 
         // Edge case: Warn if job seeker uploads company file
-        if ((file.name.includes('5') || file.name.includes('6')) && userProfileType !== 'company') {
+        if ((file.name.includes('5') || file.name.includes('6')) && userProfileType !== 'company' && userProfileType !== 'facilitator') {
           addAIMessage('⚠️ Этот файл предназначен для профиля компании. Для соискателей используйте файлы 1.txt или 2.txt', 2000);
           setIsTyping(false);
           return;
+        }
+
+        // Edge case: Warn if facilitator uploads company/job seeker file (or vice versa logic if needed)
+        if ((file.name.includes('3') || file.name.includes('4')) && userProfileType !== 'facilitator') {
+           addAIMessage('⚠️ Этот файл предназначен для профиля учебного заведения.', 2000);
+           setIsTyping(false);
+           return;
         }
 
         // Demo Logic for Resume parsing
@@ -633,6 +663,34 @@ export default function AIChat() {
                 skills: 'Промышленная изоляция трубопроводов, Энергосберегающие решения, Системы утепления фасадов, Огнезащита конструкций, Холодильная изоляция, Акустическая изоляция',
                 experience: '15 лет опыта в производстве и монтаже теплоизоляции',
                 about: 'Производственная компания, специализирующаяся на комплексных решениях в области теплоизоляции. Собственное производство современных теплоизоляционных материалов. За 15 лет работы выполнено более 2000 объектов, смонтировано 350+ км промышленной изоляции. Работаем с ведущими предприятиями нефтегазовой, химической и энергетической отраслей. Предоставляем полный цикл услуг: от разработки технических решений до монтажа и гарантийного обслуживания.'
+            };
+        } else if (file.name.includes('3') && userProfileType === 'facilitator') {
+            // Facilitator 3: Аграрный Университет
+            extractedData = {
+                fullName: 'Аграрный Университет Юга России',
+                email: 'info@agrouni.ru',
+                phone: '+7 (861) 222-33-44',
+                location: 'Краснодар, Россия',
+                foundedYear: '1955',
+                studentCount: '15000+',
+                coursesCount: '45',
+                campusCount: '12',
+                skills: 'Цифровое сельское хозяйство, Биотехнологии и генетика, Сити-фермерство, Агроробототехника, Ветеринария, Агрономия',
+                about: 'Современный центр высшего аграрного образования, который объединяет классические научные фундаментальные знания и передовые технологические решения для агропромышленного комплекса. Университет готовит специалистов нового поколения, способных работать с высокотехнологичным оборудованием, цифровыми системами и инновационными агротехнологиями. Мы сочетаем фундаментальные аграрные дисциплины с практико-ориентированным подходом.'
+            };
+        } else if (file.name.includes('4') && userProfileType === 'facilitator') {
+            // Facilitator 4: Технолаб Промбудущее
+            extractedData = {
+                fullName: 'Технолаб Промбудущее',
+                email: 'admissions@technolab.ru',
+                phone: '+7 (495) 555-66-77',
+                location: 'Москва, Россия',
+                foundedYear: '2018',
+                studentCount: '850',
+                coursesCount: '12',
+                campusCount: '2',
+                skills: 'Промышленная автоматизация, Мехатроника, Робототехника, ЧПУ программирование, Промышленный дизайн, Аддитивные технологии',
+                about: 'Образовательная площадка, специализирующаяся на подготовке высококвалифицированных специалистов для промышленных предприятий. Под руководством Алексея Семенова, мы предлагаем уникальный образовательный опыт, где 80% времени уделяется практике. Наши студенты погружаются в реальную производственную среду, работая с современным оборудованием и решая актуальные задачи отрасли.'
             };
         } else {
             extractedData = simulateAIProcessing(fileText);
