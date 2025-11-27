@@ -774,14 +774,13 @@ export default function AIChat() {
       const profileKey = `prommeProfile_${authUser.email}_${authUser.profileType}`;
       localStorage.setItem(profileKey, JSON.stringify(profileFormData));
       
-      // Close modal and redirect to profile page
-      setIsModalOpen(false);
+      // Switch back to chat view and suggest avatar creation
       setViewMode('chat');
       
-      // Redirect after a short delay
+      // Show avatar suggestion after a short delay
       setTimeout(() => {
-        router.push('/profile');
-      }, 300);
+        suggestVideoAvatar();
+      }, 500);
     } catch (error) {
       console.error('Error saving profile:', error);
       alert('Ошибка при сохранении профиля');
@@ -1069,14 +1068,20 @@ export default function AIChat() {
                   <div className="space-y-4">
                     <div>
                       <label className="mb-1 block text-sm font-semibold text-text">
-                        {authenticatedUser?.profileType === 'company' ? 'Название компании *' : 'Полное имя *'}
+                        {authenticatedUser?.profileType === 'company' ? 'Название компании *' : 
+                         authenticatedUser?.profileType === 'facilitator' ? 'Название учреждения *' : 
+                         'Полное имя *'}
                       </label>
                       <input
                         type="text"
                         value={profileFormData.fullName}
                         onChange={(e) => handleFormChange('fullName', e.target.value)}
                         className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
-                        placeholder={authenticatedUser?.profileType === 'company' ? 'ООО "Название"' : 'Иван Иванов'}
+                        placeholder={
+                          authenticatedUser?.profileType === 'company' ? 'ООО "Название"' : 
+                          authenticatedUser?.profileType === 'facilitator' ? 'Технолаб...' : 
+                          'Иван Иванов'
+                        }
                       />
                     </div>
 
@@ -1102,15 +1107,17 @@ export default function AIChat() {
                       />
                     </div>
 
-                    <div>
-                      <label className="mb-1 block text-sm font-semibold text-text">Дата рождения</label>
-                      <input
-                        type="date"
-                        value={profileFormData.dateOfBirth}
-                        onChange={(e) => handleFormChange('dateOfBirth', e.target.value)}
-                        className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
-                      />
-                    </div>
+                    {authenticatedUser?.profileType !== 'company' && authenticatedUser?.profileType !== 'facilitator' && (
+                      <div>
+                        <label className="mb-1 block text-sm font-semibold text-text">Дата рождения</label>
+                        <input
+                          type="date"
+                          value={profileFormData.dateOfBirth}
+                          onChange={(e) => handleFormChange('dateOfBirth', e.target.value)}
+                          className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
+                        />
+                      </div>
+                    )}
 
                     <div>
                       <label className="mb-1 block text-sm font-semibold text-text">Город</label>
@@ -1124,39 +1131,59 @@ export default function AIChat() {
                     </div>
 
                     <div>
-                      <label className="mb-1 block text-sm font-semibold text-text">Образование</label>
+                      <label className="mb-1 block text-sm font-semibold text-text">
+                        {authenticatedUser?.profileType === 'company' ? 'Лицензии и сертификаты' : 
+                         authenticatedUser?.profileType === 'facilitator' ? 'Аккредитация и статус' : 
+                         'Образование'}
+                      </label>
                       <textarea
                         value={profileFormData.education}
                         onChange={(e) => handleFormChange('education', e.target.value)}
                         rows={2}
                         className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
-                        placeholder="МГУ, Факультет программирования, 2020"
+                        placeholder={
+                          authenticatedUser?.profileType === 'company' ? 'ISO 9001, Лицензия №...' : 
+                          authenticatedUser?.profileType === 'facilitator' ? 'Государственная аккредитация №...' : 
+                          'МГУ, Факультет программирования, 2020'
+                        }
                       />
                     </div>
 
                     <div>
                       <label className="mb-1 block text-sm font-semibold text-text">
-                        {authenticatedUser?.profileType === 'company' ? 'Опыт компании' : 'Опыт работы'}
+                        {authenticatedUser?.profileType === 'company' ? 'История компании / Опыт' : 
+                         authenticatedUser?.profileType === 'facilitator' ? 'История учреждения' : 
+                         'Опыт работы'}
                       </label>
                       <textarea
                         value={profileFormData.experience}
                         onChange={(e) => handleFormChange('experience', e.target.value)}
                         rows={3}
                         className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
-                        placeholder={authenticatedUser?.profileType === 'company' ? '10 лет на рынке...' : 'Senior Developer в компании X, 5 лет опыта...'}
+                        placeholder={
+                          authenticatedUser?.profileType === 'company' ? '10 лет на рынке...' : 
+                          authenticatedUser?.profileType === 'facilitator' ? 'Основан в 2010 году...' : 
+                          'Senior Developer в компании X, 5 лет опыта...'
+                        }
                       />
                     </div>
 
                     <div>
                       <label className="mb-1 block text-sm font-semibold text-text">
-                        {authenticatedUser?.profileType === 'company' ? 'Услуги и специализация' : 'Навыки'}
+                        {authenticatedUser?.profileType === 'company' ? 'Услуги и специализация' : 
+                         authenticatedUser?.profileType === 'facilitator' ? 'Направления подготовки' : 
+                         'Навыки'}
                       </label>
                       <textarea
                         value={profileFormData.skills}
                         onChange={(e) => handleFormChange('skills', e.target.value)}
                         rows={2}
                         className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
-                        placeholder={authenticatedUser?.profileType === 'company' ? 'Производство, Монтаж, Консалтинг' : 'JavaScript, React, Node.js, Python'}
+                        placeholder={
+                          authenticatedUser?.profileType === 'company' ? 'Производство, Монтаж, Консалтинг' : 
+                          authenticatedUser?.profileType === 'facilitator' ? 'IT, Робототехника, Дизайн' : 
+                          'JavaScript, React, Node.js, Python'
+                        }
                       />
                     </div>
 
@@ -1231,6 +1258,44 @@ export default function AIChat() {
                           </div>
                         </div>
                       </>
+                    )}
+
+                    {/* Facilitator-Specific Fields */}
+                    {authenticatedUser?.profileType === 'facilitator' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <label className="mb-1 block text-sm font-semibold text-text">Год основания</label>
+                          <input
+                            type="text"
+                            value={profileFormData.foundedYear || ''}
+                            onChange={(e) => handleFormChange('foundedYear', e.target.value)}
+                            className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
+                            placeholder="1995"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="mb-1 block text-sm font-semibold text-text">Количество студентов</label>
+                          <input
+                            type="text"
+                            value={profileFormData.studentCount || ''}
+                            onChange={(e) => handleFormChange('studentCount', e.target.value)}
+                            className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
+                            placeholder="1000+"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="mb-1 block text-sm font-semibold text-text">Количество программ</label>
+                          <input
+                            type="text"
+                            value={profileFormData.coursesCount || ''}
+                            onChange={(e) => handleFormChange('coursesCount', e.target.value)}
+                            className="w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-text outline-none transition-colors focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20"
+                            placeholder="20+"
+                          />
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
