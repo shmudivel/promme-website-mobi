@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FeedPost as FeedPostType } from '@/types';
 import CommentSection, { Comment } from './CommentSection';
 
@@ -13,6 +13,19 @@ export default function FeedPost({ post }: FeedPostProps) {
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+
+  useEffect(() => {
+    if (post.embed_html && post.embed_html.includes('tiktok.com')) {
+      // Remove any existing TikTok scripts to force a re-scan/reload
+      const existingScripts = document.querySelectorAll('script[src="https://www.tiktok.com/embed.js"]');
+      existingScripts.forEach(script => script.remove());
+
+      const script = document.createElement('script');
+      script.src = "https://www.tiktok.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, [post.embed_html]);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -111,6 +124,31 @@ export default function FeedPost({ post }: FeedPostProps) {
       )}
 
       {/* Media */}
+      {/* Custom Embed (TikTok etc) */}
+      {post.embed_html && (
+        <div className="w-full overflow-hidden bg-gray-50">
+          <div 
+            className="tiktok-embed-container flex justify-center" 
+            dangerouslySetInnerHTML={{ __html: post.embed_html }} 
+          />
+        </div>
+      )}
+
+      {/* Native Video */}
+      {post.video && !post.embed_html && (
+        <div className="w-full aspect-[9/16] max-h-[600px] bg-black flex items-center justify-center overflow-hidden">
+          <video 
+            src={post.video} 
+            className="w-full h-full object-contain" 
+            controls 
+            playsInline 
+            loop
+            muted
+            autoPlay
+          />
+        </div>
+      )}
+
       {post.images && post.images.length > 0 && (
         <div className={`grid gap-1 ${post.images.length === 1 ? 'grid-cols-1' : post.images.length === 2 ? 'grid-cols-2' : 'grid-cols-2'}`}>
           {post.images.slice(0, 4).map((image, index) => (

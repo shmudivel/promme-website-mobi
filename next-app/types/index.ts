@@ -81,6 +81,7 @@ export interface FeedPost {
   content: string;
   images?: string[];
   video?: string;
+  embed_html?: string;
   likes_count: number;
   comments_count: number;
   shares_count: number;

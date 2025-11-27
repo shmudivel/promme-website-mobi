@@ -49,6 +49,24 @@ const generateMockPosts = (count: number, startIndex: number): FeedPostType[] =>
     'Специалист по снабжению',
   ];
 
+  const demoVideos = [
+    'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/5_company.mp4',
+    'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/6_company.mp4',
+    'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/3_study_facility.mp4',
+    'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/4_study_facility.mp4',
+    'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/1js.mp4',
+    'https://wqixabfppisqznzjqnoo.supabase.co/storage/v1/object/public/avatars/2js.mp4'
+  ];
+
+  // TikTok Embed Code
+  const tikTokEmbed = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@russion.cyber.girl/video/7300659757721996552" data-video-id="7300659757721996552" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@russion.cyber.girl" href="https://www.tiktok.com/@russion.cyber.girl?refer=embed">@russion.cyber.girl</a> <p>Собеседование на бетонный завод </p> <a target="_blank" title="♬ оригинальный звук - Айтишник из деревни" href="https://www.tiktok.com/music/оригинальный-звук-7300659813632051970?refer=embed">♬ оригинальный звук - Айтишник из деревни</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>`;
+
+  const tikTokEmbed2 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@trueprogramming/video/7063729267221302529" data-video-id="7063729267221302529" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@trueprogramming" href="https://www.tiktok.com/@trueprogramming?refer=embed">@trueprogramming</a> Автоматизация производства <a title="производство" target="_blank" href="https://www.tiktok.com/tag/%D0%BF%D1%80%D0%BE%D0%B8%D0%B7%D0%B2%D0%BE%D0%B4%D1%81%D1%82%D0%B2%D0%BE?refer=embed">#производство</a> <a title="автоматизация" target="_blank" href="https://www.tiktok.com/tag/%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F?refer=embed">#автоматизация</a> <a title="робот" target="_blank" href="https://www.tiktok.com/tag/%D1%80%D0%BE%D0%B1%D0%BE%D1%82?refer=embed">#робот</a> <a title="россия" target="_blank" href="https://www.tiktok.com/tag/%D1%80%D0%BE%D1%81%D1%81%D0%B8%D1%8F?refer=embed">#россия</a> <a title="код" target="_blank" href="https://www.tiktok.com/tag/%D0%BA%D0%BE%D0%B4?refer=embed">#код</a> <a target="_blank" title="♬ Lofi - Domknowz" href="https://www.tiktok.com/music/Lofi-6799585653702019073?refer=embed">♬ Lofi - Domknowz</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>`;
+
+  const tikTokEmbed3 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@alimbek_ulan/video/7421394428113227014" data-video-id="7421394428113227014" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@alimbek_ulan" href="https://www.tiktok.com/@alimbek_ulan?refer=embed">@alimbek_ulan</a> У Changan также имеется свой R&#38;D центр, где проходят разные исследования и разработки. И как же без собственного полигона, где проходят тесты все автомобили. Мы посетили все эти места, посмотрели, как работают люди, как меняются технологий, и появляются новые идеи и разработки, чтобы сделать жизнь людей более комфортной. Спасибо Changan Kazakhstan и Astana Motors за такую возможность увидеть всё вживую. Основной автомобильный бренд Changan: Changan (Чанань, Чанъань) Суббренды: AVATR, DEEPAL, NEVO, KAICHENG. Поделись и подпишись, чтобы узнавать что-то интересное от Алимбек Улан. <a title="alimbekulan" target="_blank" href="https://www.tiktok.com/tag/alimbekulan?refer=embed">#alimbekulan</a> <a title="changan" target="_blank" href="https://www.tiktok.com/tag/changan?refer=embed">#changan</a> <a target="_blank" title="♬ оригинальный звук - Alimbek Ulan" href="https://www.tiktok.com/music/оригинальный-звук-7421394479297284870?refer=embed">♬ оригинальный звук - Alimbek Ulan</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>`;
+
+  const tikTokEmbed4 = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@izmetro/video/7463385854904388872" data-video-id="7463385854904388872" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@izmetro" href="https://www.tiktok.com/@izmetro?refer=embed">@izmetro</a> Девчонка за токарным станком?! А чего, такое сейчас встречается все чаще. Елена Гончарова уже несколько лет трудится оператором станка с ЧПУ. Почему нет? Завод современный, зарплата хорошая, куча современных плюшек, а своим ответственным отношением к работе она заслужила уважение у коллег-мужчин. Смотрим новый репортаж из Ленинградской области, с завода ЦКБМ Машиностроительного дивизиона Росатома. Елена, спасибо за ролик! Ты - крутая и харизматичная девушка.  Из метро🏴‍☠️ <a title="izmetro" target="_blank" href="https://www.tiktok.com/tag/izmetro?refer=embed">#izmetro</a> <a title="изметро" target="_blank" href="https://www.tiktok.com/tag/%D0%B8%D0%B7%D0%BC%D0%B5%D1%82%D1%80%D0%BE?refer=embed">#изметро</a> <a target="_blank" title="♬ оригинальный звук - Izmetro" href="https://www.tiktok.com/music/оригинальный-звук-7463385903139326737?refer=embed">♬ оригинальный звук - Izmetro</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>`;
+
   for (let i = 0; i < count; i++) {
     const index = startIndex + i;
     const type = types[index % types.length];
@@ -71,6 +89,54 @@ const generateMockPosts = (count: number, startIndex: number): FeedPostType[] =>
       is_liked: Math.random() > 0.7,
       created_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
     };
+
+    // Specific TikTok Post 4 (at the top)
+    if (index === 0) {
+      post.content = 'Женщины в промышленности! 👩‍🏭 #равенство #карьера';
+      post.embed_html = tikTokEmbed4;
+    }
+    // Specific TikTok Post 1
+    else if (index === 2) {
+      post.content = 'Интересное видео о работе на заводе! 😂 #юмор #производство';
+      post.embed_html = tikTokEmbed;
+    }
+    // Specific TikTok Post 2
+    else if (index === 5) {
+      post.content = 'Автоматизация производства в действии! 🤖 #технологии #будущее';
+      post.embed_html = tikTokEmbed2;
+      post.images = undefined; // Clear default images if any
+    }
+    // Specific TikTok Post 3
+    else if (index === 8) {
+      post.content = 'Исследования и разработки в Changan! 🚗 #автопром #технологии';
+      post.embed_html = tikTokEmbed3;
+      post.images = undefined; // Clear default images if any
+    }
+    // Supabase Videos (Indices 1, 3, 4, 6, 7, 9)
+    else {
+      // Map remaining indices to video array indices 0-5
+      const videoMap: { [key: number]: number } = { 1: 0, 3: 1, 4: 2, 6: 3, 7: 4, 9: 5 };
+      const videoIndex = videoMap[index];
+      
+      if (videoIndex !== undefined) {
+        post.video = demoVideos[videoIndex];
+        post.content = index % 2 === 0
+          ? 'Автоматизация производства - будущее промышленности! Внедряем новые робототехнические комплексы. #промышленность #автоматизация'
+          : 'Наши инженеры контролируют каждый этап производства. Качество - наш главный приоритет! 🏭 #производство #качество';
+        post.images = undefined;
+      }
+      // Fallback to images for any other indices (if count > 10)
+      else if (index % 5 === 0) {
+        post.images = [`https://picsum.photos/seed/${index}/800/600`];
+      } else if (index % 7 === 0) {
+        post.images = [
+          `https://picsum.photos/seed/${index}a/800/600`,
+          `https://picsum.photos/seed/${index}b/800/600`,
+        ];
+      }
+    }
+
+    // Add event details for event posts
 
     // Add event details for event posts
     if (type === 'event' && index % 3 === 0) {
@@ -294,125 +360,31 @@ export default function SocialFeed() {
 
   return (
     <div ref={feedContainerRef} className="min-h-screen bg-gray-50 pt-20 pb-24">
+      {/* PROMME Logo Bar */}
+      <div className="fixed left-0 right-0 top-0 md:top-20 z-[999] overflow-hidden bg-gradient-to-r from-primary-orange via-primary-gold to-primary-pink shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
+        {/* Decorative background shapes */}
+        <div className="pointer-events-none absolute left-[-10%] top-[-50%] h-[500px] w-[500px] rounded-full bg-white/10" />
+        <div className="pointer-events-none absolute bottom-[-50%] right-[-5%] h-[400px] w-[400px] rounded-full bg-white/8" />
+        
+        <div className="relative z-10 py-4">
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-4">
+            <svg width="186" height="33" viewBox="0 0 186 33" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-[40px] w-auto text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
+              <path d="M0.61 32V0.949997H12.715C19.555 0.949997 23.74 5.045 23.74 10.895C23.74 17.78 19.285 21.515 11.905 21.515H5.92V32H0.61ZM5.92 17.285H12.4C16.315 17.285 18.385 15.035 18.385 11.12C18.385 7.34 16.225 5.27 12.445 5.27H5.92V17.285ZM25.3424 32V0.949997H39.5174C45.9524 0.949997 49.6874 3.875 49.6874 9.23C49.6874 13.1 47.7074 15.665 43.7474 16.97C47.4824 17.69 49.0574 19.58 49.1924 23.045L49.4174 28.67C49.4624 30.065 49.7774 31.19 50.2724 32H44.9174C44.3324 31.1 44.1524 30.155 44.1074 28.67L43.9724 23.945C43.8374 20.705 42.5774 19.085 39.0224 19.085H30.6524V32H25.3424ZM30.6524 15.08H39.2024C42.3974 15.08 44.2424 13.235 44.2424 9.815C44.2424 6.62 42.3974 5 38.6624 5H30.6524V15.08ZM65.1903 32.315C56.4153 32.315 50.9703 26.15 50.9703 16.565C50.9703 6.98 56.7303 0.634999 65.5053 0.634999C73.9203 0.634999 79.6803 6.44 79.6803 16.295C79.6803 25.925 73.5603 32.315 65.1903 32.315ZM65.2803 27.995C70.9953 27.995 74.0553 23.675 74.0553 16.34C74.0553 9.095 70.9053 4.955 65.3253 4.955C59.9253 4.955 56.5953 9.185 56.5953 16.34C56.5953 23.585 59.7453 27.995 65.2803 27.995ZM81.487 32V0.949997H88.867L94.447 16.97C95.932 21.335 97.057 24.8 97.732 27.365C98.407 24.89 99.487 21.47 100.927 17.195L106.462 0.949997H113.752V32H108.622V19.85C108.622 14.585 108.712 10.13 108.847 6.485C108.262 8.555 107.182 11.885 105.607 16.475L100.207 32H94.987L89.227 15.98C88.192 13.055 87.202 9.905 86.212 6.53C86.347 10.13 86.437 14.585 86.437 19.94V32H81.487ZM116.766 32V0.949997H124.146L129.726 16.97C131.211 21.335 132.336 24.8 133.011 27.365C133.686 24.89 134.766 21.47 136.206 17.195L141.741 0.949997H149.031V32H143.901V19.85C143.901 14.585 143.991 10.13 144.126 6.485C143.541 8.555 142.461 11.885 140.886 16.475L135.486 32H130.266L124.506 15.98C123.471 13.055 122.481 9.905 121.491 6.53C121.626 10.13 121.716 14.585 121.716 19.94V32H116.766ZM152.046 32V0.949997H173.556V5.27H157.356V14H170.946V18.185H157.356V27.68H174.321V32H152.046Z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-2xl mx-auto px-4">
         {/* Refresh Indicator */}
         {isRefreshing && (
-          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-white rounded-full shadow-lg px-6 py-3 flex items-center gap-3">
-            <div className="w-5 h-5 border-3 border-primary-purple-dark border-t-transparent rounded-full animate-spin"></div>
+          <div className="fixed top-36 left-1/2 -translate-x-1/2 z-50 bg-white rounded-full shadow-lg px-6 py-3 flex items-center gap-3">
+            <div className="w-5 h-5 border-3 border-primary-orange border-t-transparent rounded-full animate-spin"></div>
             <span className="text-sm font-medium text-gray-700">Обновление...</span>
           </div>
         )}
 
-        {/* Filter and Sort Bar */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-gray-900">Лента</h3>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="text-primary-purple-dark hover:bg-purple-50 p-2 rounded-lg transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-              </svg>
-            </button>
-          </div>
-          
-          {showFilters && (
-            <div className="space-y-3 pt-3 border-t border-gray-100">
-              <div>
-                <label className="text-xs font-medium text-gray-600 mb-2 block">Сортировка</label>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setSortBy('recent')}
-                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      sortBy === 'recent'
-                        ? 'bg-primary-purple-dark text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    Последние
-                  </button>
-                  <button
-                    onClick={() => setSortBy('popular')}
-                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      sortBy === 'popular'
-                        ? 'bg-primary-purple-dark text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    Популярные
-                  </button>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-xs font-medium text-gray-600 mb-2 block">Тип контента</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['all', 'post', 'event', 'vacancy'] as const).map((type) => (
-                    <button
-                      key={type}
-                      onClick={() => setFilterType(type)}
-                      className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                        filterType === type
-                          ? 'bg-primary-orange text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                    >
-                      {type === 'all' && 'Все'}
-                      {type === 'post' && 'Посты'}
-                      {type === 'event' && 'События'}
-                      {type === 'vacancy' && 'Вакансии'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Create Post Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-orange to-primary-pink flex items-center justify-center text-white font-semibold text-lg">
-              Я
-            </div>
-            <button 
-              onClick={() => openModal('post')}
-              className="flex-1 text-left px-4 py-3 bg-gray-50 rounded-full text-gray-500 hover:bg-gray-100 transition-colors"
-            >
-              Поделитесь новостью или событием...
-            </button>
-          </div>
-          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100">
-            <button 
-              onClick={() => openModal('post')}
-              className="flex items-center gap-2 text-primary-orange hover:bg-orange-50 px-4 py-2 rounded-lg transition-colors"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span className="text-sm font-medium">Фото</span>
-            </button>
-            <button 
-              onClick={() => openModal('event')}
-              className="flex items-center gap-2 text-primary-purple-dark hover:bg-purple-50 px-4 py-2 rounded-lg transition-colors"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <span className="text-sm font-medium">Событие</span>
-            </button>
-            <button 
-              onClick={() => openModal('vacancy')}
-              className="flex items-center gap-2 text-primary-pink hover:bg-pink-50 px-4 py-2 rounded-lg transition-colors"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <span className="text-sm font-medium">Вакансия</span>
-            </button>
-          </div>
-        </div>
+        {/* Create Post Card Removed - Replaced by FAB */}
 
         {/* Feed Posts */}
         <div className="space-y-4">
@@ -426,7 +398,7 @@ export default function SocialFeed() {
           <div className="flex items-center justify-center py-8">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-primary-orange rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-              <div className="w-2 h-2 bg-primary-purple-dark rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-2 h-2 bg-primary-gold rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
               <div className="w-2 h-2 bg-primary-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
             </div>
           </div>
@@ -442,6 +414,17 @@ export default function SocialFeed() {
           </div>
         )}
       </div>
+
+      {/* Floating Action Button (FAB) */}
+      <button
+        onClick={() => openModal('post')}
+        className="fixed bottom-24 right-4 md:bottom-8 md:right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-primary-orange to-primary-pink text-white shadow-lg flex items-center justify-center hover:shadow-xl transition-all hover:scale-105 active:scale-95"
+        aria-label="Создать публикацию"
+      >
+        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
 
       {/* Post Creation Modal */}
       <PostCreationModal
